@@ -1,6 +1,9 @@
 package main
 
-import "github.com/bpina/neptune/events"
+import (
+	"github.com/bpina/neptune/events"
+	"github.com/bpina/neptune/game"
+)
 
 func main() {
 	ps := new(events.ConsoleSubscriber)
@@ -8,8 +11,6 @@ func main() {
 	eb := events.NewEventBroadcaster()
 	eb.AddSubscriber(ps)
 
-	e := events.NewEvent("test-event")
-	e.Data["event-time"] = "now"
-
-	eb.Broadcast(e)
+	g := game.NewGame(eb)
+	g.Initialize()
 }

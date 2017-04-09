@@ -1,6 +1,9 @@
 package events
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type EventBroadcaster struct {
 	Messages    chan Event
@@ -13,13 +16,14 @@ type EventSubscriber interface {
 
 type Event struct {
 	Key       string
-	Timestamp int
+	Timestamp int32
 	Data      map[string]string
 }
 
 func NewEvent(key string) *Event {
 	e := new(Event)
 	e.Key = key
+	e.Timestamp = int32(time.Now().Unix())
 	e.Data = make(map[string]string)
 
 	return e
@@ -52,10 +56,15 @@ type ConsoleSubscriber struct{}
 
 func (ps *ConsoleSubscriber) EventReceived(e *Event) {
 	fmt.Printf("Event: %s\n", e.Key)
+	fmt.Printf("Timestamp: %d\n", e.Timestamp)
+	fmt.Printf("Data:\n")
 
-	if e.Data != nil {
+	if e.Data != nil && len(e.Data) > 0 {
 		for k, v := range e.Data {
-			fmt.Printf("Data: %s\nValue: %s\n", k, v)
+			fmt.Printf("  Key: %s\tValue: %s\n", k, v)
 		}
+	} else {
+		fmt.Printf("\tNone\n")
 	}
+	fmt.Printf("\n\n")
 }
